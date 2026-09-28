@@ -12,6 +12,13 @@
     },
     {
       "matchManagers": ["composer"],
+      "matchDepNames": [
+        "php"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["dockerfile"],
       "matchPackageNames": [
         "php"
       ],
