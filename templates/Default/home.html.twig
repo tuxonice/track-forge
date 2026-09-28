@@ -17,8 +17,6 @@
                         <tr>
                             <th>{{ 'home.table_name'|trans }}</th>
                             <th style="width: 40px">&nbsp;</th>
-                            <th style="width: 40px">&nbsp;</th>
-                            <th style="width: 40px">&nbsp;</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -30,16 +28,6 @@
                                     <td>
                                         <a href="{{ path('app_track_view', {trackKey: track.key}) }}" class="nav-link" title="View">
                                             <i class="bi bi-eye"></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ path('app_track_map', {trackKey: track.key}) }}" target="_blank" class="nav-link" title="Show on map">
-                                            <i class="bi bi-map"></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ path('app_track_info', {trackKey: track.key}) }}" class="nav-link" title="Show info">
-                                            <i class="bi bi-info-circle"></i>
                                         </a>
                                     </td>
                                 </tr>
