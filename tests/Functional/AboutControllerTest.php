@@ -27,7 +27,7 @@ class AboutControllerTest extends WebTestCase
         $user = $this->persistUser();
         $this->client->loginUser($user);
 
-        $this->client->request('GET', '/en/profile/');
+        $this->client->request('GET', '/en/tracks/');
 
         self::assertSelectorExists('a[href="/en/about"]');
     }

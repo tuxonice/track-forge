@@ -12,24 +12,24 @@
                 </div>
                 <div class="card-body">
                     {% if tracks %}
-                    <table class="table table-bordered">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>{{ 'home.table_name'|trans }}</th>
-                            <th style="width: 40px">&nbsp;</th>
+                            <th class="text-start">{{ 'home.table_name'|trans }}</th>
+                            <th class="text-end">{{ 'track.distance'|trans }}</th>
+                            <th class="text-end">{{ 'track.elevation'|trans }}</th>
+                            <th class="text-end">{{ 'track.date'|trans }}</th>
                         </tr>
                         </thead>
                         <tbody>
                             {% for track in tracks %}
                                 <tr>
-                                    <td>
-                                        {{ track.name }}
+                                    <td class="text-start">
+                                        <a href="{{ path('app_track_view', {trackKey: track.key}) }}">{{ track.name }}</a>
                                     </td>
-                                    <td>
-                                        <a href="{{ path('app_track_view', {trackKey: track.key}) }}" class="nav-link" title="View">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                    </td>
+                                    <td class="text-end">{{ track.distance }} Km</td>
+                                    <td class="text-end">{{ track.elevation }} m</td>
+                                    <td class="text-end">{{ track.displayDate|short_datetime }}</td>
                                 </tr>
                             {% endfor %}
 

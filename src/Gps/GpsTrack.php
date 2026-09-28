@@ -41,12 +41,14 @@ class GpsTrack
         $this->gpxFile = $this->gpx->load($filename);
 
         $carryHDistance = 0.0;
-        foreach ($this->gpxFile->tracks as $track) {
-            foreach ($track->segments as $segment) {
-                $carryHDistance = 0.0;
-                $this->processPoints($segment->points, $carryHDistance);
-                $this->recordedAt ??= $this->earliestPointTime($segment->points);
-            }
+
+        // Only the first track's first segment is used: a second <trkseg> usually marks a
+        // separate, disconnected leg (e.g. after a recording pause), which would otherwise
+        // restart the distance/elevation series from zero and corrupt the charts.
+        $firstSegment = $this->gpxFile->tracks[0]->segments[0] ?? null;
+        if ($firstSegment !== null) {
+            $this->processPoints($firstSegment->points, $carryHDistance);
+            $this->recordedAt ??= $this->earliestPointTime($firstSegment->points);
         }
 
         foreach ($this->gpxFile->routes as $route) {
@@ -72,6 +74,30 @@ class GpsTrack
     public function getName(): ?string
     {
         return $this->gpxFile->tracks[0]->name ?? $this->gpxFile->routes[0]->name ?? null;
+    }
+
+    /** Whether the first track's first <trkseg> (the only one process() actually uses) has any
+     * <trkpt>, as opposed to being a route-only (<rte>/<rtept>) file. Routes rarely carry
+     * per-point timestamps, so velocity isn't meaningful. */
+    public function hasTrackPoints(): bool
+    {
+        $segment = $this->gpxFile->tracks[0]->segments[0] ?? null;
+
+        return $segment !== null && count($segment->points) > 0;
+    }
+
+    /** Whether at least one computed point has a velocity value. Not every trkpt-based GPX file
+     * carries per-point timestamps (e.g. some exports only set a file-level metadata time), in
+     * which case every point's velocity is null and a velocity chart would have nothing to show. */
+    public function hasVelocityData(): bool
+    {
+        foreach ($this->data as $point) {
+            if ($point['velocity'] !== null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @param Point[] $points */
@@ -117,7 +143,21 @@ class GpsTrack
             'elevation' => $start->elevation,
             'totalDistance' => $carryHDistance,
             'vDistance' => $vDistance,
+            'velocity' => $this->velocity($start, $end, $hDistance),
         ];
+    }
+
+    /** Speed in km/h between two consecutive points, or null when either is missing a
+     * timestamp (not every GPX file records one) or they share the same timestamp. */
+    private function velocity(Point $start, Point $end, float $hDistance): ?float
+    {
+        if ($start->time === null || $end->time === null) {
+            return null;
+        }
+
+        $duration = $end->time->getTimestamp() - $start->time->getTimestamp();
+
+        return $duration > 0 ? ($hDistance / $duration) * 3.6 : null;
     }
 
     // From https://www.movable-type.co.uk/scripts/latlong.html

@@ -29,7 +29,7 @@ class TrackControllerTest extends WebTestCase
 
         $this->client->request('GET', '/en/track/info/' . $track->getKey());
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertSelectorTextContains('.alert-danger', 'Track does not exist');
     }
@@ -41,7 +41,7 @@ class TrackControllerTest extends WebTestCase
 
         $this->client->request('GET', '/en/track/info/does-not-exist');
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
     }
 
     public function testDeletingOwnTrackRemovesItAndItsFile(): void
@@ -58,7 +58,7 @@ class TrackControllerTest extends WebTestCase
             '_token' => $token,
         ]);
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertSelectorTextContains('.alert-success', 'Track deleted');
 
@@ -86,7 +86,7 @@ class TrackControllerTest extends WebTestCase
             '_token' => $token,
         ]);
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertSelectorTextContains('.alert-danger', 'Track does not exist');
 

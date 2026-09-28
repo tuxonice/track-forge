@@ -45,7 +45,7 @@ class MapControllerTest extends WebTestCase
 
         $this->client->request('GET', '/en/map/' . $track->getKey());
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertSelectorTextContains('.alert-danger', 'Track does not exist');
     }
@@ -58,7 +58,7 @@ class MapControllerTest extends WebTestCase
 
         $this->client->request('GET', '/en/map/' . $track->getKey());
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertSelectorTextContains('.alert-danger', 'Track file does not exist');
     }

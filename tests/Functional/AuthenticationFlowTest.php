@@ -16,7 +16,7 @@ class AuthenticationFlowTest extends WebTestCase
             '_token' => $this->verifyCsrfToken(),
         ]);
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertResponseIsSuccessful();
     }
@@ -121,13 +121,13 @@ class AuthenticationFlowTest extends WebTestCase
         $user = $this->persistUser('logout@example.com');
         $this->client->loginUser($user);
 
-        $this->client->request('GET', '/en/profile/');
+        $this->client->request('GET', '/en/tracks/');
         self::assertResponseIsSuccessful();
 
         $this->client->request('GET', '/logout');
         self::assertResponseRedirects();
 
-        $this->client->request('GET', '/en/profile/');
+        $this->client->request('GET', '/en/tracks/');
         self::assertResponseRedirects('/en/login');
     }
 

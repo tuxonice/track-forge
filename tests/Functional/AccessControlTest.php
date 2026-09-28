@@ -6,7 +6,7 @@ class AccessControlTest extends WebTestCase
 {
     public function testAProtectedRouteRedirectsAnUnauthenticatedVisitorToTheLoginForm(): void
     {
-        $this->client->request('GET', '/en/profile/');
+        $this->client->request('GET', '/en/tracks/');
 
         self::assertResponseRedirects('/en/login');
     }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="pixel-tracks-tests" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Fixture Track With Two Segments</name>
+    <trkseg>
+      <trkpt lat="0.0000000" lon="0.0000000">
+        <ele>0.0</ele>
+        <time>2026-01-01T10:00:00Z</time>
+      </trkpt>
+      <trkpt lat="0.0000000" lon="0.0010000">
+        <ele>10.0</ele>
+        <time>2026-01-01T10:01:00Z</time>
+      </trkpt>
+      <trkpt lat="0.0000000" lon="0.0020000">
+        <ele>5.0</ele>
+        <time>2026-01-01T10:02:00Z</time>
+      </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="10.0000000" lon="10.0000000">
+        <ele>100.0</ele>
+        <time>2026-01-01T12:00:00Z</time>
+      </trkpt>
+      <trkpt lat="10.0000000" lon="10.0010000">
+        <ele>200.0</ele>
+        <time>2026-01-01T12:01:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

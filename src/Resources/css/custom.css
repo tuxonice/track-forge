@@ -30,6 +30,6 @@
     height: 500px;
 }
 
-#elevation-chart {
+#elevation-chart, #velocity-chart {
     height: 300px;
 }

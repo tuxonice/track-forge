@@ -14,7 +14,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->client->request('GET', '/');
 
-        self::assertResponseRedirects('/en/profile/');
+        self::assertResponseRedirects('/en/tracks/');
     }
 
     public function testProfileListsTheUsersOwnTracksNewestFirst(): void
@@ -27,7 +27,7 @@ class HomeControllerTest extends WebTestCase
         $this->persistTrack($other, 'not-mine', new \DateTimeImmutable('2026-01-03 08:00:00'));
 
         $this->client->loginUser($user);
-        $crawler = $this->client->request('GET', '/en/profile/');
+        $crawler = $this->client->request('GET', '/en/tracks/');
 
         self::assertResponseIsSuccessful();
         $names = $crawler->filter('table tbody tr td:first-child')->each(
@@ -46,10 +46,10 @@ class HomeControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         // PAGINATION_IPP defaults to 10, so the 11th (oldest) track spills onto page 2.
-        $this->client->request('GET', '/en/profile/');
+        $this->client->request('GET', '/en/tracks/');
         self::assertSelectorTextContains('body', 'track-11');
 
-        $crawler = $this->client->request('GET', '/en/profile/2');
+        $crawler = $this->client->request('GET', '/en/tracks/2');
         self::assertSelectorTextContains('body', 'track-1');
         self::assertStringNotContainsString('track-11', $crawler->filter('.card-body')->text());
     }
