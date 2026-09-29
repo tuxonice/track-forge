@@ -1,27 +1,32 @@
-/* Navbar background matches the TrackMix brand green. Bootstrap's default
-   navbar-light .nav-link (rgba(0,0,0,.55)) falls short of WCAG AA's 4.5:1
-   ratio on this background, so force the logo's ink color (~7.4:1) instead. */
-.navbar-trackmix {
-    background-color: #98b800;
+/* Dark navbar with an orange accent line, using the TrackForge brand colors.
+   Bootstrap's default navbar-light .nav-link (rgba(0,0,0,.55)) is unreadable
+   on a dark background, so force white text (~16:1 on #151e28). */
+.navbar-trackforge {
+    background-color: #151e28;
+    border-bottom: 3px solid #ff7a00;
 }
 
-.navbar-trackmix .nav-link,
-.navbar-trackmix .navbar-brand {
-    color: #151e28;
+.navbar-trackforge .nav-link,
+.navbar-trackforge .navbar-brand {
+    color: #fff;
 }
 
-.navbar-trackmix .nav-link:hover,
-.navbar-trackmix .nav-link:focus {
-    color: #151e28;
+.navbar-trackforge .nav-link:hover,
+.navbar-trackforge .nav-link:focus {
+    color: #fff;
     text-decoration: underline;
 }
 
-/* Bootstrap's default focus ring (rgba(13,110,253,.25)) is a ~1.3:1 ratio
-   against this green — nearly invisible. Swap in a solid ink-colored
-   outline (~7.4:1) so keyboard focus stays visible. */
-.navbar-trackmix .nav-link:focus-visible,
-.navbar-trackmix .navbar-brand:focus-visible {
-    outline: 2px solid #151e28;
+.navbar-trackforge .navbar-toggler {
+    border-color: rgba(255, 255, 255, .6);
+    filter: invert(1);
+}
+
+/* Bootstrap's default focus ring is nearly invisible on this dark background.
+   Swap in a solid orange outline (~6:1) so keyboard focus stays visible. */
+.navbar-trackforge .nav-link:focus-visible,
+.navbar-trackforge .navbar-brand:focus-visible {
+    outline: 2px solid #ff7a00;
     outline-offset: 2px;
     box-shadow: none;
 }
