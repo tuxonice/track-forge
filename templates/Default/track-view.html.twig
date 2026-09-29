@@ -14,6 +14,20 @@
             <div id="track-map" class="rounded shadow-sm"></div>
         </div>
     </div>
+    {% if showVelocityChart %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border shadow-sm">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'track.velocity_profile'|trans }}</h3>
+                </div>
+                <div class="card-body">
+                    <div id="velocity-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <div class="row">
         <div class="col-12">
             <div class="card border shadow-sm">
@@ -67,6 +81,33 @@
                     <a href="{{ path('app_profile') }}" class="btn btn-secondary">
                         <i class="bi bi-list"></i> {{ 'track.back_to_list'|trans }}
                     </a>
+                    <button type="button" class="btn btn-danger float-end d-print-none" data-bs-toggle="modal" data-bs-target="#modal-default">
+                        <i class="bi bi-trash"></i> {{ 'track.delete'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ 'track.delete_title'|trans }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'track.delete_confirm_body'|trans({'%name%': track.name})|raw }}</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'track.cancel'|trans }}</button>
+                    <form action="{{ path('app_track_delete') }}" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token('track-delete') }}"/>
+                        <input type="hidden" name="track_key" value="{{ track.key }}"/>
+                        <button type="submit" class="btn btn-danger float-end" style="margin-right: 5px;">
+                            <i class="bi bi-trash"></i> {{ 'track.delete'|trans }}
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -94,6 +135,60 @@
         trackMap.fitBounds(polyline.getBounds());
 
         am5.ready(function () {
+            {% if showVelocityChart %}
+            let velocityRoot = am5.Root.new('velocity-chart');
+            velocityRoot.setThemes([am5themes_Animated.new(velocityRoot)]);
+
+            let velocityChart = velocityRoot.container.children.push(am5xy.XYChart.new(velocityRoot, {
+                panX: true,
+                panY: false,
+                wheelX: 'panX',
+                wheelY: 'zoomX',
+                pinchZoomX: true,
+                layout: velocityRoot.verticalLayout,
+            }));
+
+            let velocityCursor = velocityChart.set('cursor', am5xy.XYCursor.new(velocityRoot, {behavior: 'none'}));
+            velocityCursor.lineY.set('visible', false);
+
+            let velocityXAxis = velocityChart.xAxes.push(am5xy.ValueAxis.new(velocityRoot, {
+                min: 0,
+                extraTooltipPrecision: 2,
+                numberFormat: "#.## ' km'",
+                renderer: am5xy.AxisRendererX.new(velocityRoot, {minGridDistance: 50}),
+            }));
+
+            let velocityYAxis = velocityChart.yAxes.push(am5xy.ValueAxis.new(velocityRoot, {
+                min: 0,
+                numberFormat: "#.## ' km/h'",
+                renderer: am5xy.AxisRendererY.new(velocityRoot, {}),
+            }));
+
+            let velocitySeries = velocityChart.series.push(am5xy.SmoothedXLineSeries.new(velocityRoot, {
+                name: 'Velocity',
+                xAxis: velocityXAxis,
+                yAxis: velocityYAxis,
+                valueXField: 'distance',
+                valueYField: 'velocity',
+                connect: false,
+                stroke: am5.color(0x198754),
+                fill: am5.color(0x198754),
+                tooltip: am5.Tooltip.new(velocityRoot, {labelText: '{valueX.formatNumber("#.##")} km: {valueY.formatNumber("#.##")} km/h'}),
+            }));
+            velocitySeries.fills.template.setAll({fillOpacity: 0.2, visible: true});
+            velocitySeries.strokes.template.setAll({strokeWidth: 2});
+
+            velocitySeries.data.setAll(jsonData.map((point) => ({
+                distance: point.totalDistance / 1000,
+                velocity: point.velocity,
+            })));
+
+            velocityChart.set('scrollbarX', am5.Scrollbar.new(velocityRoot, {orientation: 'horizontal'}));
+
+            velocitySeries.appear(1000);
+            velocityChart.appear(1000, 100);
+            {% endif %}
+
             let root = am5.Root.new('elevation-chart');
             root.setThemes([am5themes_Animated.new(root)]);
 
@@ -117,7 +212,7 @@
             }));
 
             let yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                numberFormat: "#.# ' m'",
+                numberFormat: "#.## ' m'",
                 renderer: am5xy.AxisRendererY.new(root, {}),
             }));
 
@@ -129,7 +224,7 @@
                 valueYField: 'elevation',
                 stroke: am5.color(0x0d6efd),
                 fill: am5.color(0x0d6efd),
-                tooltip: am5.Tooltip.new(root, {labelText: '{valueX} km: {valueY} m'}),
+                tooltip: am5.Tooltip.new(root, {labelText: '{valueX.formatNumber("#.##")} km: {valueY.formatNumber("#.##")} m'}),
             }));
             series.fills.template.setAll({fillOpacity: 0.2, visible: true});
             series.strokes.template.setAll({strokeWidth: 2});

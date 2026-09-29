@@ -1,5 +1,5 @@
 nav:
-    profile: Profile
+    profile: Tracks
     about: About
     logout: Logout
 
@@ -50,6 +50,7 @@ track:
     info_title: Track Info
     view_title: Track
     full_screen: Full Screen
+    velocity_profile: Velocity Profile
     elevation_profile: Elevation Profile
     gpx_name: GPX Name
     points: Points

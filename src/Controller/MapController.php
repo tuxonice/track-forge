@@ -80,6 +80,7 @@ class MapController extends AbstractController
         return $this->render('Default/track-view.html.twig', [
             'track' => $track,
             'points' => $this->gpsTrack->getJsonPoints(),
+            'showVelocityChart' => $this->gpsTrack->hasTrackPoints() && $this->gpsTrack->hasVelocityData(),
         ]);
     }
 }

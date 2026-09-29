@@ -52,6 +52,20 @@ class GpsTrackTest extends TestCase
         self::assertEqualsWithDelta($legDistance * 2, $points[1]['totalDistance'], 0.02);
         // ele goes 10.0 -> 5.0 across this leg: a descent, so the raw diff is negative.
         self::assertSame(-5.0, $points[1]['vDistance']);
+
+        // Each leg's trkpt are 60 seconds apart in the fixture.
+        self::assertEqualsWithDelta($legDistance / 60 * 3.6, $points[0]['velocity'], 0.01);
+        self::assertEqualsWithDelta($legDistance / 60 * 3.6, $points[1]['velocity'], 0.01);
+    }
+
+    public function testVelocityIsNullWhenPointsHaveNoTimeData(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/missing-creator.gpx');
+
+        $points = $track->getPoints();
+
+        self::assertNull($points[0]['velocity']);
     }
 
     public function testGetInfoSummarisesDistanceElevationGainAndPointCount(): void
@@ -131,5 +145,53 @@ class GpsTrackTest extends TestCase
         $track->process(__DIR__ . '/../../Fixtures/gpx/valid-track-no-name.gpx');
 
         self::assertNull($track->getName());
+    }
+
+    public function testHasTrackPointsIsTrueForAFileWithTrkpt(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/valid-track.gpx');
+
+        self::assertTrue($track->hasTrackPoints());
+    }
+
+    public function testHasTrackPointsIsFalseForARouteOnlyFile(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/route-with-time.gpx');
+
+        self::assertFalse($track->hasTrackPoints());
+    }
+
+    public function testHasVelocityDataIsTrueWhenPointsHaveTimestamps(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/valid-track.gpx');
+
+        self::assertTrue($track->hasVelocityData());
+    }
+
+    public function testHasVelocityDataIsFalseWhenTrkptHaveNoTimestamps(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/valid-track-no-time.gpx');
+
+        self::assertFalse($track->hasVelocityData());
+    }
+
+    public function testProcessOnlyUsesTheFirstTrksegWhenThereAreMultiple(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/valid-track-multi-segment.gpx');
+
+        $points = $track->getPoints();
+
+        // Same as the single-segment valid-track.gpx fixture: the second <trkseg>'s 2 points
+        // (a separate, disconnected leg) are ignored entirely.
+        self::assertCount(2, $points);
+        self::assertSame(0.0, $points[0]['latitude']);
+        self::assertSame(10.0, $points[0]['vDistance']);
+
+        self::assertEquals(new \DateTimeImmutable('2026-01-01T10:00:00Z'), $track->getRecordedAt());
     }
 }

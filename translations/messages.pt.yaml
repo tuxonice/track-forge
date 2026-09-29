@@ -1,5 +1,5 @@
 nav:
-    profile: Perfil
+    profile: Percursos
     about: Sobre
     logout: Sair
 
@@ -50,6 +50,7 @@ track:
     info_title: Informação do Percurso
     view_title: Percurso
     full_screen: Ecrã Inteiro
+    velocity_profile: Perfil de Velocidade
     elevation_profile: Perfil de Elevação
     gpx_name: Nome GPX
     points: Pontos
