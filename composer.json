@@ -29,7 +29,7 @@
         "ext-json": "*",
         "ext-intl": "*",
         "symfony/http-foundation": "7.4.19",
-        "twig/twig": "3.29.0",
+        "twig/twig": "3.30.0",
         "symfony/console": "7.4.19",
         "ext-sqlite3": "*",
         "ext-dom": "*",
