@@ -29,7 +29,7 @@ mkdir "releases/$release_name"
 cd "releases/$release_name" || exit
 
 echo -e "${GREEN}Cloning the repo ${NC}"
-git clone https://github.com/tuxonice/pixel-tracks.git .
+git clone https://github.com/tuxonice/track-forge.git .
 git checkout "$release_name"
 
 echo -e "${GREEN}Remove not needed files ${NC}"

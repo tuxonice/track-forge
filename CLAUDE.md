@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-pixel-tracks: a small self-hosted PHP app for uploading and browsing GPX tracks (stats, map view, share links). Auth is passwordless via a two-step numeric login code. PHP 8.4, Symfony 7.4 LTS, Doctrine ORM over SQLite.
+track-forge: a small self-hosted PHP app for uploading and browsing GPX tracks (stats, map view, share links). Auth is passwordless via a two-step numeric login code. PHP 8.4, Symfony 7.4 LTS, Doctrine ORM over SQLite.
 
 ## Setup
 

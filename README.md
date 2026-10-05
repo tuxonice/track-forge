@@ -1,4 +1,4 @@
-# pixel-tracks
+# track-forge
  
  Small PHP website to manage GPX tracks, built on Symfony 7.4 with Doctrine ORM over SQLite.
  
