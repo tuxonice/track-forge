@@ -26,7 +26,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN docker-php-ext-install -j$(nproc) zip iconv intl xml soap opcache pdo pdo_mysql mysqli bz2 exif xsl
+# opcache is bundled statically into core as of PHP 8.5 and can no longer be
+# built as a shared extension; docker-php-ext-install opcache now fails with
+# "cp: cannot stat 'modules/*'" because there is nothing left to compile.
+RUN docker-php-ext-install -j$(nproc) zip iconv intl xml soap pdo pdo_mysql mysqli bz2 exif xsl
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
 RUN docker-php-ext-install -j$(nproc) gd
 
