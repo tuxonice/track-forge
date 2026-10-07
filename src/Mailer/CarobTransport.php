@@ -73,7 +73,7 @@ class CarobTransport extends AbstractTransport
         try {
             $response = $this->client->request('POST', $this->endpoint, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->apiToken,
+                    'X-Carob-Token' => $this->apiToken,
                     'Accept' => 'application/json',
                 ],
                 'json' => $payload,
