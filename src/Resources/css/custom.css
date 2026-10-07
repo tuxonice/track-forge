@@ -94,6 +94,15 @@ h1, h2, h3, h4, h5, h6, .card-title {
 
 .table > :not(caption) > * > * {
     border-bottom-color: var(--tf-line);
+    padding: .85rem 1rem;
+}
+
+.table thead th {
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--tf-text-dim);
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
@@ -102,6 +111,26 @@ h1, h2, h3, h4, h5, h6, .card-title {
 
 .table tbody tr:hover {
     background-color: rgba(47, 93, 74, .07);
+}
+
+.tf-track-name {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--tf-ink);
+}
+
+.tf-track-name svg {
+    stroke: var(--tf-forest);
+    flex: none;
+}
+
+.tf-track-name:hover {
+    color: var(--tf-forest-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .pagination .page-item.active .page-link {
@@ -205,8 +234,11 @@ h1, h2, h3, h4, h5, h6, .card-title {
 }
 
 /* Lightweight upload dropzone: visual framing around the native file input,
-   which stays a normal <input type="file"> for accessibility/behavior. */
+   which stays a normal <input type="file"> for accessibility/behavior. It's
+   a <label for="trackFile">, not a <div>, so the whole box (not just the
+   native control inside it) opens the file picker on click. */
 .tf-dropzone {
+    display: block;
     border: 2px dashed var(--tf-line);
     border-radius: .65rem;
     padding: 1rem;

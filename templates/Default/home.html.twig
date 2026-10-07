@@ -38,7 +38,7 @@
         <div class="col-12">
             <div class="card border shadow-sm">
                 <div class="card-header">
-                    <h3 class="card-title">{{ 'home.tracks_title'|trans }}</h3>
+                    <h2 class="card-title h3">{{ 'home.tracks_title'|trans }}</h2>
                 </div>
                 <div class="card-body">
                     {% if tracks %}
@@ -56,7 +56,10 @@
                             {% for track in tracks %}
                                 <tr>
                                     <td class="text-start">
-                                        <a href="{{ path('app_track_view', {trackKey: track.key}) }}">{{ track.name }}</a>
+                                        <a href="{{ path('app_track_view', {trackKey: track.key}) }}" class="tf-track-name">
+                                            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l5-14 4 10 3-6 6 10"/></svg>
+                                            {{ track.name }}
+                                        </a>
                                     </td>
                                     <td class="text-end"><span class="stat-pill">{{ track.distance }} Km</span></td>
                                     <td class="text-end"><span class="stat-pill stat-pill-elevation">{{ track.elevation }} m</span></td>
@@ -82,7 +85,7 @@
         <div class="col-12">
             <div class="card border shadow-sm">
                 <div class="card-header">
-                    <h3 class="card-title">{{ 'home.upload_title'|trans }}</h3>
+                    <h2 class="card-title h3">{{ 'home.upload_title'|trans }}</h2>
                 </div>
                 <form method="POST" enctype="multipart/form-data" action="{{ path('app_track_upload') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('track-upload') }}"/>
@@ -93,9 +96,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="trackFile" class="form-label">{{ 'home.track_file_label'|trans }}</label>
-                            <div class="tf-dropzone">
+                            <label class="tf-dropzone" for="trackFile">
                                 <input name="trackFile" type="file" id="trackFile" class="form-control" required/>
-                            </div>
+                            </label>
                         </div>
                     </div>
 
