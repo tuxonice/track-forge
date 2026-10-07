@@ -27,6 +27,11 @@ error:
 
 home:
     tracks_title: Percursos
+    tracks_subtitle: Todos os percursos que já registou, com distância, subida e o dia em que os fez.
+    hero_eyebrow: 'Perfil · %email%'
+    stat_tracks: Percursos
+    stat_distance: Distância total
+    stat_climb: Subida total
     table_name: Nome
     no_tracks: Ainda não há percursos!
     upload_title: Enviar Percurso

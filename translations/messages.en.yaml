@@ -27,6 +27,11 @@ error:
 
 home:
     tracks_title: Tracks
+    tracks_subtitle: Every route you've logged, with distance, climb and the day you walked it.
+    hero_eyebrow: 'Profile · %email%'
+    stat_tracks: Tracks
+    stat_distance: Total distance
+    stat_climb: Total climb
     table_name: Name
     no_tracks: No tracks yet!
     upload_title: Upload Track
