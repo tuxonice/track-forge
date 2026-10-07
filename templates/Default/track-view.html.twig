@@ -62,11 +62,11 @@
                             </tr>
                             <tr>
                                 <th>{{ 'track.distance'|trans }}</th>
-                                <td>{{ track.distance }} Km</td>
+                                <td><span class="stat-pill">{{ track.distance }} Km</span></td>
                             </tr>
                             <tr>
                                 <th>{{ 'track.elevation'|trans }}</th>
-                                <td>{{ track.elevation }} m</td>
+                                <td><span class="stat-pill stat-pill-elevation">{{ track.elevation }} m</span></td>
                             </tr>
                             <tr>
                                 <th>{{ 'track.date'|trans }}</th>
@@ -131,7 +131,7 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(trackMap);
 
-        let polyline = L.polyline(latlngs, {color: 'red'}).addTo(trackMap);
+        let polyline = L.polyline(latlngs, {color: '#ff7a00'}).addTo(trackMap);
         trackMap.fitBounds(polyline.getBounds());
 
         am5.ready(function () {

@@ -54,6 +54,9 @@ class HomeController extends AbstractController
         return $this->render('Default/home.html.twig', [
             'tracks' => $tracks,
             'pages' => $paginator->displayPages(),
+            'totalTracks' => $total,
+            'totalDistance' => $this->trackRepository->sumDistanceForUser($user),
+            'totalElevation' => $this->trackRepository->sumElevationForUser($user),
         ]);
     }
 }

@@ -3,15 +3,46 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+    <div class="tf-hero">
+        <svg class="tf-hero-topo" viewBox="0 0 1040 160" preserveAspectRatio="none" aria-hidden="true">
+            <g fill="none" stroke="#2f5d4a" stroke-width="1.1">
+                <path d="M-20 30 C 180 5, 340 70, 520 38 S 860 5, 1060 45" opacity=".16"/>
+                <path d="M-20 62 C 160 38, 360 100, 540 68 S 880 38, 1060 78" opacity=".12"/>
+                <path d="M-20 94 C 200 74, 380 130, 560 100 S 900 74, 1060 108" opacity=".09"/>
+            </g>
+        </svg>
+        <div class="tf-hero-inner">
+            <span class="tf-hero-eyebrow">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l5-14 4 10 3-6 6 10"/></svg>
+                {{ 'home.hero_eyebrow'|trans({'%email%': app.user.email}) }}
+            </span>
+            <h1>{{ 'home.tracks_title'|trans }}</h1>
+            <p>{{ 'home.tracks_subtitle'|trans }}</p>
+            <div class="tf-hero-stats">
+                <div class="tf-hero-stat">
+                    <span class="num">{{ totalTracks }}</span>
+                    <span class="lbl">{{ 'home.stat_tracks'|trans }}</span>
+                </div>
+                <div class="tf-hero-stat">
+                    <span class="num">{{ totalDistance|number_format(1, '.', ',') }} Km</span>
+                    <span class="lbl">{{ 'home.stat_distance'|trans }}</span>
+                </div>
+                <div class="tf-hero-stat">
+                    <span class="num">{{ totalElevation|number_format(0, '.', ',') }} m</span>
+                    <span class="lbl">{{ 'home.stat_climb'|trans }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row mb-4">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
+        <div class="col-12">
             <div class="card border shadow-sm">
                 <div class="card-header">
                     <h3 class="card-title">{{ 'home.tracks_title'|trans }}</h3>
                 </div>
                 <div class="card-body">
                     {% if tracks %}
+                    <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -27,14 +58,15 @@
                                     <td class="text-start">
                                         <a href="{{ path('app_track_view', {trackKey: track.key}) }}">{{ track.name }}</a>
                                     </td>
-                                    <td class="text-end">{{ track.distance }} Km</td>
-                                    <td class="text-end">{{ track.elevation }} m</td>
+                                    <td class="text-end"><span class="stat-pill">{{ track.distance }} Km</span></td>
+                                    <td class="text-end"><span class="stat-pill stat-pill-elevation">{{ track.elevation }} m</span></td>
                                     <td class="text-end">{{ track.displayDate|short_datetime }}</td>
                                 </tr>
                             {% endfor %}
 
                         </tbody>
                     </table>
+                    </div>
                     {% else %}
                         <div class="text-center">{{ 'home.no_tracks'|trans }}</div>
                     {% endif %}
@@ -45,11 +77,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2"></div>
     </div>
     <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
+        <div class="col-12">
             <div class="card border shadow-sm">
                 <div class="card-header">
                     <h3 class="card-title">{{ 'home.upload_title'|trans }}</h3>
@@ -63,7 +93,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="trackFile" class="form-label">{{ 'home.track_file_label'|trans }}</label>
-                            <input name="trackFile" type="file" id="trackFile" class="form-control" required/>
+                            <div class="tf-dropzone">
+                                <input name="trackFile" type="file" id="trackFile" class="form-control" required/>
+                            </div>
                         </div>
                     </div>
 
@@ -73,9 +105,5 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-2"></div>
     </div>
-
-
-
 {% endblock %}
