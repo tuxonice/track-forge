@@ -41,7 +41,7 @@ class CarobTransportTest extends TestCase
 
         self::assertSame('POST', $capturedMethod);
         self::assertSame('https://carob.example.com/api/mailer/send', $capturedUrl);
-        self::assertContains('Authorization: Bearer secret-token', $capturedOptions['headers']);
+        self::assertContains('X-Carob-Token: secret-token', $capturedOptions['headers']);
 
         $payload = json_decode($capturedOptions['body'], true);
         self::assertSame([
