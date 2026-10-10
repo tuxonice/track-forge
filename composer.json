@@ -47,7 +47,7 @@
         "symfony/security-bundle": "7.4.20",
         "symfony/monolog-bundle": "4.1.0",
         "doctrine/doctrine-bundle": "3.3.2",
-        "doctrine/orm": "3.7.4",
+        "doctrine/orm": "3.7.5",
         "doctrine/doctrine-migrations-bundle": "4.0.1",
         "symfony/mailer": "7.4.19",
         "symfony/rate-limiter": "7.4.18",
