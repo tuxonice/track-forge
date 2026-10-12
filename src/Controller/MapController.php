@@ -33,14 +33,14 @@ class MapController extends AbstractController
         if ($track->getUser() !== $this->getUser()) {
             $this->addFlash('danger', $this->translator->trans('flash.track_not_found'));
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_tracks');
         }
 
         $trackFilePath = $this->fileUploaderService->getUserDataPath($track->getUser()) . '/' . $track->getFilename();
         if (!file_exists($trackFilePath)) {
             $this->addFlash('danger', $this->translator->trans('flash.track_file_not_found'));
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_tracks');
         }
 
         $this->gpsTrack->process($trackFilePath);
@@ -65,14 +65,14 @@ class MapController extends AbstractController
         if ($track->getUser() !== $this->getUser()) {
             $this->addFlash('danger', $this->translator->trans('flash.track_not_found'));
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_tracks');
         }
 
         $trackFilePath = $this->fileUploaderService->getUserDataPath($track->getUser()) . '/' . $track->getFilename();
         if (!file_exists($trackFilePath)) {
             $this->addFlash('danger', $this->translator->trans('flash.track_file_not_found'));
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_tracks');
         }
 
         $this->gpsTrack->process($trackFilePath);

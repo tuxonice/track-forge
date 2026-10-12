@@ -1,9 +1,12 @@
 nav:
     profile: Percursos
     about: Sobre
+    account: Conta
     logout: Sair
 
 flash:
+    account_deleted: A sua conta foi eliminada
+    account_email_mismatch: O email introduzido não corresponde à sua conta
     no_file_uploaded: Nenhum ficheiro foi enviado
     track_name_required: O nome do percurso é obrigatório
     upload_failed: Não foi possível enviar o ficheiro
@@ -84,3 +87,13 @@ mail:
     login_code_subject: O seu código de acesso
     login_code_body: 'Aqui está o seu código de acesso:'
     login_code_footer_prefix: 'Enviado com <3 por'
+
+account:
+    title: Conta
+    email: Email
+    tracks: Percursos
+    danger_zone: Zona de perigo
+    delete_warning: Eliminar a sua conta remove permanentemente o seu perfil, todos os seus percursos e respetivos ficheiros GPX. Esta ação não pode ser revertida.
+    delete: Eliminar conta
+    delete_title: Eliminar a sua conta?
+    delete_confirm_body: 'Para confirmar, escreva abaixo o seu endereço de email (%email%).'

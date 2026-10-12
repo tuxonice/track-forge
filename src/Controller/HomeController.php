@@ -26,10 +26,10 @@ class HomeController extends AbstractController
     {
         $locale = $request->getPreferredLanguage(['en', 'pt']);
 
-        return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+        return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
     }
 
-    #[Route(path: ['en' => '/en/tracks/', 'pt' => '/pt/percursos/'], name: 'app_profile', methods: ['GET'])]
+    #[Route(path: ['en' => '/en/tracks/', 'pt' => '/pt/percursos/'], name: 'app_tracks', methods: ['GET'])]
     #[Route(path: ['en' => '/en/tracks/{page}', 'pt' => '/pt/percursos/{page}'], name: 'app_profile_page', requirements: ['page' => '\d+'], methods: ['GET'])]
     public function profile(Request $request): Response
     {

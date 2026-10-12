@@ -1,0 +1,50 @@
+{% extends "Default/base.html.twig" %}
+
+{% block title %}{{ 'account.title'|trans }}{% endblock %}
+
+{% block content %}
+    <section class="py-5 container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <h1 class="fw-light">{{ 'account.title'|trans }}</h1>
+                <dl class="row mt-4">
+                    <dt class="col-sm-3">{{ 'account.email'|trans }}</dt>
+                    <dd class="col-sm-9">{{ app.user.email }}</dd>
+                    <dt class="col-sm-3">{{ 'account.tracks'|trans }}</dt>
+                    <dd class="col-sm-9">{{ app.user.tracks|length }}</dd>
+                </dl>
+
+                <div class="card border-danger mt-5">
+                    <div class="card-header text-danger fw-semibold">{{ 'account.danger_zone'|trans }}</div>
+                    <div class="card-body">
+                        <p>{{ 'account.delete_warning'|trans }}</p>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-account">
+                            <i class="bi bi-trash"></i> {{ 'account.delete'|trans }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-delete-account" tabindex="-1" aria-labelledby="modal-delete-account-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" action="{{ path('app_account_delete') }}" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('account-delete') }}"/>
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-delete-account-title">{{ 'account.delete_title'|trans }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'account.delete_confirm_body'|trans({'%email%': app.user.email}) }}</p>
+                    <input type="email" class="form-control" name="email" required="required" autocomplete="off"
+                           placeholder="{{ app.user.email }}" aria-label="{{ 'account.email'|trans }}"/>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'track.cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> {{ 'account.delete'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

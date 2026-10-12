@@ -47,14 +47,14 @@ class UploadController extends AbstractController
         if (!$file) {
             $this->addFlash('danger', $this->translator->trans('flash.no_file_uploaded', [], null, $locale));
 
-            return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+            return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
         }
 
         $trackName = trim(htmlspecialchars((string) $request->request->get('trackName', '')));
         if ($trackName === '') {
             $this->addFlash('danger', $this->translator->trans('flash.track_name_required', [], null, $locale));
 
-            return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+            return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
         }
 
         try {
@@ -62,7 +62,7 @@ class UploadController extends AbstractController
         } catch (GpxValidationException $e) {
             $this->addFlash('danger', $this->translator->trans($e->getMessage(), $e->getParameters(), null, $locale));
 
-            return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+            return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
         }
 
         $targetFileName = uniqid() . '.gpx';
@@ -70,7 +70,7 @@ class UploadController extends AbstractController
         if (!$this->fileUploaderService->uploadFile($user, $file, $targetFileName)) {
             $this->addFlash('danger', $this->translator->trans('flash.upload_failed', [], null, $locale));
 
-            return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+            return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
         }
 
         $trackFilePath = $this->fileUploaderService->getUserDataPath($user) . '/' . $targetFileName;
@@ -89,7 +89,7 @@ class UploadController extends AbstractController
 
         $this->addFlash('success', $this->translator->trans('flash.upload_success', [], null, $locale));
 
-        return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+        return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
     }
 
     private function assertValidGpxFile(UploadedFile $file): void

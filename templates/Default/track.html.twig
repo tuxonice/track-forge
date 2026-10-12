@@ -45,7 +45,7 @@
                             <form action="{{ path('app_track_delete') }}" method="post" onsubmit="return confirm('{{ 'track.delete_confirm_js'|trans|e('js') }}')">
                                 <input type="hidden" name="_token" value="{{ csrf_token('track-delete') }}"/>
                                 <input type="hidden" name="track_key" value="{{ track.key }}"/>
-                                <a href="{{ path('app_profile') }}" class="btn btn-secondary">
+                                <a href="{{ path('app_tracks') }}" class="btn btn-secondary">
                                     <i class="bi bi-list"></i> {{ 'track.back_to_list'|trans }}
                                 </a>
                                 <button type="button" class="btn btn-danger float-end" data-bs-toggle="modal" data-bs-target="#modal-default">

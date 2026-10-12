@@ -29,7 +29,7 @@ class TrackController extends AbstractController
         if (!$track || $track->getUser() !== $this->getUser()) {
             $this->addFlash('danger', $this->translator->trans('flash.track_not_found'));
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_tracks');
         }
 
         return $this->render('Default/track.html.twig', ['track' => $track]);
@@ -52,7 +52,7 @@ class TrackController extends AbstractController
         if (!$track || $track->getUser() !== $user) {
             $this->addFlash('danger', $this->translator->trans('flash.track_not_found', [], null, $locale));
 
-            return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+            return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
         }
 
         $trackFilePath = $this->fileUploaderService->getUserDataPath($track->getUser()) . '/' . $track->getFilename();
@@ -65,6 +65,6 @@ class TrackController extends AbstractController
 
         $this->addFlash('success', $this->translator->trans('flash.track_deleted', [], null, $locale));
 
-        return $this->redirectToRoute('app_profile', ['_locale' => $locale]);
+        return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
     }
 }

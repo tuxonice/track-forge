@@ -167,7 +167,7 @@ class LoginController extends AbstractController
 
         $this->security->login($user);
 
-        return $this->redirectToRoute('app_profile', ['_locale' => $user->getLocale()]);
+        return $this->redirectToRoute('app_tracks', ['_locale' => $user->getLocale()]);
     }
 
     private function pendingUser(Request $request): ?User
