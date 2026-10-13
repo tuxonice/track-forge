@@ -2,6 +2,7 @@
 
 namespace App\Gps;
 
+use App\Gps\Route\RoutePoint;
 use phpGPX\Models\GpxFile;
 use phpGPX\Models\Point;
 use phpGPX\phpGPX;
@@ -84,6 +85,29 @@ class GpsTrack
         $segment = $this->gpxFile->tracks[0]->segments[0] ?? null;
 
         return $segment !== null && count($segment->points) > 0;
+    }
+
+    /** Every point of the first track segment (or, for route-only files, of the first route) as
+     * plain lat/lon/elevation values. Unlike getPoints() it keeps the last point, which the
+     * route-suggestion geometry needs. Call after process(). Missing elevations count as 0.
+     *
+     * @return list<RoutePoint>
+     */
+    public function getRawPoints(): array
+    {
+        $segment = $this->gpxFile->tracks[0]->segments[0] ?? null;
+        $points = $segment !== null && count($segment->points) > 0
+            ? $segment->points
+            : (count($this->gpxFile->routes) > 0 ? $this->gpxFile->routes[0]->points : []);
+
+        return array_map(
+            static fn (Point $point): RoutePoint => new RoutePoint(
+                (float) $point->latitude,
+                (float) $point->longitude,
+                (float) ($point->elevation ?? 0.0),
+            ),
+            array_values($points)
+        );
     }
 
     /** Whether at least one computed point has a velocity value. Not every trkpt-based GPX file

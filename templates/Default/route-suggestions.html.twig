@@ -1,0 +1,72 @@
+{% extends "Default/base.html.twig" %}
+
+{% block title %}{{ 'route.title'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3">{{ 'route.title'|trans }}</h1>
+            <p class="text-muted">{{ 'route.intro'|trans }}</p>
+        </div>
+    </div>
+
+    {% if routes is empty %}
+        <div class="alert alert-info">{{ 'route.none_found'|trans }}</div>
+    {% endif %}
+
+    {% for route in routes %}
+        <div class="row mb-4" data-route-card="{{ route.index + 1 }}">
+            <div class="col-12">
+                <div class="card border shadow-sm">
+                    <div class="card-header">
+                        <h2 class="card-title h4">{{ 'route.option'|trans({'%n%': route.index + 1}) }}</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="route-map-{{ route.index }}" class="rounded mb-3" style="height: 280px;"></div>
+                        <span class="stat-pill">{{ route.distanceKm|number_format(2, '.', ',') }} Km</span>
+                        <span class="stat-pill stat-pill-elevation">{{ route.elevation|number_format(0, '.', ',') }} m</span>
+                        <p class="mt-3 mb-0">{{ 'route.uses'|trans }} {{ route.trackNames|join(', ') }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <form method="post" action="{{ path('app_route_save') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('route-save') }}"/>
+                            <input type="hidden" name="routeIndex" value="{{ route.index }}"/>
+                            {% for key in trackKeys %}
+                                <input type="hidden" name="trackKeys[]" value="{{ key }}"/>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary">{{ 'route.save'|trans }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <a href="{{ path('app_tracks') }}" class="btn btn-secondary">
+        <i class="bi bi-list"></i> {{ 'track.back_to_list'|trans }}
+    </a>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <script>
+        const routes = {{ routes|map(r => {index: r.index, latLngs: r.latLngs})|json_encode|raw }};
+        routes.forEach(function (route) {
+            const map = L.map('route-map-' + route.index);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+            const line = L.polyline(route.latLngs, {color: '#ff7a00'}).addTo(map);
+            map.fitBounds(line.getBounds());
+        });
+    </script>
+{% endblock %}

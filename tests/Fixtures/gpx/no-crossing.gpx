@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="track-forge-tests" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>No Crossing</name>
+    <trkseg>
+      <trkpt lat="0.0200000" lon="0.0000000"><ele>0.0</ele></trkpt>
+      <trkpt lat="0.0200000" lon="0.0050000"><ele>0.0</ele></trkpt>
+      <trkpt lat="0.0200000" lon="0.0100000"><ele>0.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

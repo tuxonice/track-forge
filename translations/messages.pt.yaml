@@ -13,6 +13,8 @@ flash:
     track_name_required: O nome do percurso é obrigatório
     upload_failed: Não foi possível enviar o ficheiro
     upload_success: Novo ficheiro enviado
+    route_saved: Percurso guardado como novo percurso
+    route_save_failed: Não foi possível guardar o percurso
     track_not_found: O percurso não existe
     track_file_not_found: O ficheiro do percurso não existe
     track_deleted: Percurso eliminado
@@ -101,3 +103,23 @@ account:
     delete: Eliminar conta
     delete_title: Eliminar a sua conta?
     delete_confirm_body: 'Para confirmar, escreva abaixo o seu endereço de email (%email%).'
+
+route:
+    title: Percursos sugeridos
+    intro: Percursos construídos a seguir os percursos selecionados e a trocar entre eles nos pontos onde se cruzam. Os mais longos primeiro.
+    suggest_button: Sugerir percurso
+    select_hint: Selecione 2 ou mais percursos
+    select_track: 'Selecionar %name%'
+    option: 'Sugestão %n%'
+    uses: 'Usa:'
+    save: Guardar como percurso
+    none_found: Nenhum percurso encontrado. Os percursos selecionados não se cruzam de forma a que um único percurso passe por todos.
+    default_name: 'Percurso sugerido - %date%'
+    error:
+        too_few_tracks: Selecione pelo menos dois percursos.
+        too_many_tracks: 'Só pode combinar no máximo %max% percursos de cada vez.'
+        track_file_missing: 'O ficheiro do percurso "%name%" não existe.'
+        track_too_large: 'O percurso "%name%" tem demasiados pontos (o limite é %max%).'
+        track_unreadable: 'Não foi possível ler o ficheiro do percurso "%name%".'
+        track_too_short: 'O percurso "%name%" não tem pontos distintos suficientes.'
+        not_found: Essa sugestão já não está disponível. Tente novamente.

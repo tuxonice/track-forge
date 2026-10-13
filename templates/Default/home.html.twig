@@ -42,6 +42,8 @@
                 </div>
                 <div class="card-body">
                     {% if tracks %}
+                    <form method="post" action="{{ path('app_route_suggest') }}" id="route-form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('route-suggest') }}"/>
                     <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -56,7 +58,7 @@
                         <tbody>
                             {% for track in tracks %}
                                 <tr>
-                                    <td><input type="checkbox" class="form-check-input js-map-select" value="{{ track.key }}" aria-label="{{ 'home.show_on_map'|trans }}: {{ track.name }}"/></td>
+                                    <td><input type="checkbox" class="form-check-input" name="trackKeys[]" value="{{ track.key }}" aria-label="{{ 'route.select_track'|trans({'%name%': track.name}) }}"/></td>
                                     <td class="text-start">
                                         <a href="{{ path('app_track_view', {trackKey: track.key}) }}" class="tf-track-name">
                                             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l5-14 4 10 3-6 6 10"/></svg>
@@ -72,18 +74,23 @@
                         </tbody>
                     </table>
                     </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-secondary" id="route-submit" disabled>
+                            <i class="bi bi-signpost-split"></i> {{ 'route.suggest_button'|trans }}
+                        </button>
+                        <small class="text-muted ms-2">{{ 'route.select_hint'|trans }}</small>
+                        <a href="#" id="show-on-map" class="btn btn-secondary ms-3 disabled" aria-disabled="true" data-base="{{ path('app_tracks_map') }}">
+                            {{ 'home.show_on_map'|trans }}
+                        </a>
+                        <small class="text-muted ms-2">{{ 'home.show_on_map_hint'|trans }}</small>
+                    </div>
+                    </form>
                     {% else %}
                         <div class="text-center">{{ 'home.no_tracks'|trans }}</div>
                     {% endif %}
                 </div>
 
                 <div class="card-footer clearfix">
-                    {% if tracks %}
-                    <div class="mb-2 d-flex align-items-center gap-2">
-                        <a href="#" id="show-on-map" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-base="{{ path('app_tracks_map') }}">{{ 'home.show_on_map'|trans }}</a>
-                        <small class="text-muted">{{ 'home.show_on_map_hint'|trans }}</small>
-                    </div>
-                    {% endif %}
                     {{ include('Default/Blocks/pagination.html.twig', {pages: pages}) }}
                 </div>
             </div>
@@ -120,23 +127,25 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
     <script>
         (function () {
-            const max = 3;
-            const button = document.getElementById('show-on-map');
-            if (!button) {
-                return;
-            }
-            const boxes = Array.from(document.querySelectorAll('.js-map-select'));
-            const update = () => {
-                const checked = boxes.filter((box) => box.checked);
-                boxes.forEach((box) => { box.disabled = !box.checked && checked.length >= max; });
-                button.classList.toggle('disabled', checked.length === 0);
-                button.setAttribute('aria-disabled', checked.length === 0 ? 'true' : 'false');
-                button.href = checked.length ? button.dataset.base + '?tracks=' + checked.map((box) => box.value).join(',') : '#';
+            const form = document.getElementById('route-form');
+            if (!form) { return; }
+            const submit = document.getElementById('route-submit');
+            const mapButton = document.getElementById('show-on-map');
+            const maxMapTracks = 3;
+            const boxes = form.querySelectorAll('input[type="checkbox"][name="trackKeys[]"]');
+            const update = function () {
+                const checked = Array.from(boxes).filter(function (box) { return box.checked; });
+                submit.disabled = checked.length < 2;
+                const mapEnabled = checked.length >= 1 && checked.length <= maxMapTracks;
+                mapButton.classList.toggle('disabled', !mapEnabled);
+                mapButton.setAttribute('aria-disabled', mapEnabled ? 'false' : 'true');
+                mapButton.href = mapEnabled
+                    ? mapButton.dataset.base + '?tracks=' + checked.map(function (box) { return box.value; }).join(',')
+                    : '#';
             };
-            boxes.forEach((box) => box.addEventListener('change', update));
+            boxes.forEach(function (box) { box.addEventListener('change', update); });
             update();
         })();
     </script>

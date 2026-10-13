@@ -194,4 +194,29 @@ class GpsTrackTest extends TestCase
 
         self::assertEquals(new \DateTimeImmutable('2026-01-01T10:00:00Z'), $track->getRecordedAt());
     }
+
+    public function testGetRawPointsReturnsEveryTrackPointIncludingTheLastOne(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/valid-track.gpx');
+
+        $points = $track->getRawPoints();
+
+        // getPoints() drops the last point (it emits one diff per following point); raw points keep all 3.
+        self::assertCount(3, $points);
+        self::assertSame(0.0, $points[0]->lat);
+        self::assertSame(0.002, $points[2]->lon);
+        self::assertSame(5.0, $points[2]->ele);
+    }
+
+    public function testGetRawPointsFallsBackToTheFirstRouteForRouteOnlyFiles(): void
+    {
+        $track = new GpsTrack();
+        $track->process(__DIR__ . '/../../Fixtures/gpx/route-with-time.gpx');
+
+        $points = $track->getRawPoints();
+
+        self::assertCount(2, $points);
+        self::assertSame(0.001, $points[1]->lon);
+    }
 }

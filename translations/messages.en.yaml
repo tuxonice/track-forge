@@ -13,6 +13,8 @@ flash:
     track_name_required: Track name is required
     upload_failed: Unable to upload the file
     upload_success: New file uploaded
+    route_saved: Route saved as a new track
+    route_save_failed: Unable to save the route
     track_not_found: Track does not exist
     track_file_not_found: Track file does not exist
     track_deleted: Track deleted
@@ -101,3 +103,23 @@ account:
     delete: Delete account
     delete_title: Delete your account?
     delete_confirm_body: 'To confirm, type your email address (%email%) below.'
+
+route:
+    title: Suggested routes
+    intro: Routes built by following your selected tracks and switching between them where they cross. Longest first.
+    suggest_button: Suggest route
+    select_hint: Select 2 or more tracks
+    select_track: 'Select %name%'
+    option: 'Suggestion %n%'
+    uses: 'Uses:'
+    save: Save as track
+    none_found: No route found. The selected tracks do not cross each other in a way that lets one route ride all of them.
+    default_name: 'Suggested route - %date%'
+    error:
+        too_few_tracks: Select at least two tracks.
+        too_many_tracks: 'You can combine at most %max% tracks at once.'
+        track_file_missing: 'The file for track "%name%" is missing.'
+        track_unreadable: 'The file for track "%name%" could not be read.'
+        track_too_large: 'Track "%name%" has too many points (the limit is %max%).'
+        track_too_short: 'Track "%name%" does not have enough distinct points.'
+        not_found: That suggestion is no longer available. Please try again.

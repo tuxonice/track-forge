@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional;
 
+use App\Entity\Track;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -49,6 +50,23 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    protected function persistTrackFromFixture(User $user, string $name, string $fixture): Track
+    {
+        $track = new Track($user, $name, uniqid('track-', true) . '.gpx');
+        $this->entityManager->persist($track);
+        $this->entityManager->flush();
+
+        $dataPath = self::getContainer()->getParameter('app.data_path');
+        \assert(is_string($dataPath));
+        $userFolder = sprintf('%s/profile-%03d', $dataPath, (int) $user->getId());
+        if (!is_dir($userFolder)) {
+            mkdir($userFolder, 0775, true);
+        }
+        copy(__DIR__ . '/../Fixtures/gpx/' . $fixture, $userFolder . '/' . $track->getFilename());
+
+        return $track;
     }
 
     private function removeUploadedTestFiles(): void

@@ -34,6 +34,17 @@ class FileUploaderService
         return true;
     }
 
+    public function storeContents(User $user, string $contents, string $targetFileName): bool
+    {
+        $userFolder = $this->getUserDataPath($user);
+
+        if (!is_dir($userFolder) && !mkdir($userFolder, 0775, true) && !is_dir($userFolder)) {
+            return false;
+        }
+
+        return file_put_contents($userFolder . '/' . $targetFileName, $contents) !== false;
+    }
+
     public function deleteDirectory(string $path): void
     {
         if (!is_dir($path)) {

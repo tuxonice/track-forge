@@ -37,6 +37,19 @@ class HomeControllerTest extends WebTestCase
         self::assertStringNotContainsString('not-mine', $crawler->filter('body')->text());
     }
 
+    public function testTrackListOffersAShowOnMapButtonSharingTheTrackCheckboxes(): void
+    {
+        $user = $this->persistUser();
+        $this->persistTrack($user, 'a', new \DateTimeImmutable('2026-01-01 08:00:00'));
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('GET', '/en/tracks/');
+
+        self::assertResponseIsSuccessful();
+        self::assertCount(1, $crawler->filter('#route-form input[name="trackKeys[]"]'));
+        self::assertSame('/en/map', $crawler->filter('#show-on-map')->attr('data-base'));
+    }
+
     public function testProfilePaginatesAcrossPages(): void
     {
         $user = $this->persistUser();
@@ -52,6 +65,18 @@ class HomeControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/en/tracks/2');
         self::assertSelectorTextContains('body', 'track-1');
         self::assertStringNotContainsString('track-11', $crawler->filter('.card-body')->text());
+    }
+
+    public function testTrackListOffersSelectionCheckboxesAndASuggestButton(): void
+    {
+        $user = $this->persistUser();
+        $track = $this->persistTrackFromFixture($user, 'Track A', 'crossing-a.gpx');
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/en/tracks/');
+
+        self::assertSelectorExists('form[action="/en/routes/suggest"] input[type="checkbox"][name="trackKeys[]"][value="' . $track->getKey() . '"]');
+        self::assertSelectorExists('form[action="/en/routes/suggest"] button[type="submit"][disabled]');
     }
 
     private function persistTrack(User $user, string $name, \DateTimeImmutable $createdAt): Track
