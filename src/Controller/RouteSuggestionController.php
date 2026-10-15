@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Exception\RouteSuggestionException;
 use App\Gps\GpsTrack;
 use App\Gps\Route\GpxExporter;
-use App\Gps\Route\SuggestedRoute;
+use App\Gps\Route\RoutePoint;
 use App\Repository\TrackRepository;
 use App\Service\FileUploaderService;
 use App\Service\RouteSuggestionService;
@@ -42,26 +42,29 @@ class RouteSuggestionController extends AbstractController
 
         try {
             $tracks = $this->resolveTracks($request);
-            $routes = $this->routeSuggestionService->suggest($tracks);
+            $suggestion = $this->routeSuggestionService->suggest($tracks);
         } catch (RouteSuggestionException $e) {
             $this->addFlash('danger', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
             return $this->redirectToRoute('app_tracks');
         }
 
-        $trackNames = array_map(static fn (Track $track): string => $track->getName(), $tracks);
+        $route = $suggestion->route;
 
         return $this->render('Default/route-suggestions.html.twig', [
-            'routes' => array_map(
-                static fn (SuggestedRoute $route, int $index): array => [
-                    'index' => $index,
-                    'distanceKm' => $route->distance / 1000,
-                    'elevation' => $route->elevationGain(),
-                    'trackNames' => array_map(static fn (int $i): string => $trackNames[$i], $route->trackIndexes),
-                    'latLngs' => array_map(static fn ($p): array => [$p->lat, $p->lon], $route->points),
+            'route' => $route === null ? null : [
+                'distanceKm' => $route->distance / 1000,
+                'elevation' => $route->elevationGain(),
+                'trackNames' => array_map(static fn (int $i): string => $tracks[$i]->getName(), $route->trackIndexes),
+                'latLngs' => self::latLngs($route->points),
+            ],
+            'sources' => array_map(
+                static fn (Track $track, array $points): array => [
+                    'name' => $track->getName(),
+                    'latLngs' => self::latLngs($points),
                 ],
-                $routes,
-                array_keys($routes)
+                $tracks,
+                $suggestion->sourcePoints
             ),
             'trackKeys' => array_map(static fn (Track $track): string => $track->getKey(), $tracks),
         ]);
@@ -81,15 +84,14 @@ class RouteSuggestionController extends AbstractController
         try {
             $tracks = $this->resolveTracks($request);
             // Recompute rather than trust the client: no coordinates ever come from the request.
-            $routes = $this->routeSuggestionService->suggest($tracks);
+            $route = $this->routeSuggestionService->suggest($tracks)->route;
         } catch (RouteSuggestionException $e) {
             $this->addFlash('danger', $this->translator->trans($e->getMessage(), $e->getParameters(), null, $locale));
 
             return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
         }
 
-        $index = (int) $request->request->get('routeIndex', -1);
-        if (!isset($routes[$index])) {
+        if ($route === null) {
             $this->addFlash('danger', $this->translator->trans('route.error.not_found', [], null, $locale));
 
             return $this->redirectToRoute('app_tracks', ['_locale' => $locale]);
@@ -102,7 +104,7 @@ class RouteSuggestionController extends AbstractController
             $locale
         );
         $targetFileName = uniqid() . '.gpx';
-        $xml = $this->gpxExporter->export($routes[$index], $name);
+        $xml = $this->gpxExporter->export($route, $name);
 
         if (!$this->fileUploaderService->storeContents($user, $xml, $targetFileName)) {
             $this->addFlash('danger', $this->translator->trans('flash.route_save_failed', [], null, $locale));
@@ -126,6 +128,15 @@ class RouteSuggestionController extends AbstractController
         $this->addFlash('success', $this->translator->trans('flash.route_saved', [], null, $locale));
 
         return $this->redirectToRoute('app_track_info', ['_locale' => $locale, 'trackKey' => $track->getKey()]);
+    }
+
+    /**
+     * @param list<RoutePoint> $points
+     * @return list<array{0: float, 1: float}>
+     */
+    private static function latLngs(array $points): array
+    {
+        return array_map(static fn (RoutePoint $p): array => [$p->lat, $p->lon], $points);
     }
 
     /**

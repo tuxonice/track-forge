@@ -4,7 +4,7 @@ namespace App\Tests\Functional;
 
 class RouteSuggestionControllerTest extends WebTestCase
 {
-    public function testSuggestingFromTwoCrossingTracksListsRankedRoutes(): void
+    public function testSuggestingFromTwoCrossingTracksShowsTheSingleLongestRoute(): void
     {
         $user = $this->persistUser();
         $a = $this->persistTrackFromFixture($user, 'Track A', 'crossing-a.gpx');
@@ -17,10 +17,32 @@ class RouteSuggestionControllerTest extends WebTestCase
         ]);
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorCount(4, '[data-route-card]');
-        self::assertSelectorTextContains('[data-route-card="1"]', 'Track A');
-        self::assertSelectorTextContains('[data-route-card="1"]', 'Track B');
-        self::assertSelectorExists('[data-route-card="1"] form[action="/routes/save"]');
+        self::assertSelectorCount(1, '[data-route-card]');
+        self::assertSelectorTextContains('[data-route-card]', 'Track A');
+        self::assertSelectorTextContains('[data-route-card]', 'Track B');
+        self::assertSelectorExists('[data-route-card] form[action="/routes/save"]');
+    }
+
+    public function testTheMapDrawsEachSourceTrackAndTheResultInDifferentColors(): void
+    {
+        $user = $this->persistUser();
+        $a = $this->persistTrackFromFixture($user, 'Track A', 'crossing-a.gpx');
+        $b = $this->persistTrackFromFixture($user, 'Track B', 'crossing-b.gpx');
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('POST', '/en/routes/suggest', [
+            '_token' => $this->suggestToken(),
+            'trackKeys' => [$a->getKey(), $b->getKey()],
+        ]);
+
+        self::assertResponseIsSuccessful();
+        $html = $crawler->html();
+        self::assertStringContainsString("resultColor = '#ff7a00'", $html);
+        self::assertStringContainsString("sourceColors = ['#1f78ff', '#1a9850'", $html);
+        // Each source track is passed to the map by name, with its own points.
+        self::assertSame(2, substr_count($html, '"latLngs"') - 1);
+        self::assertStringContainsString('"name":"Track A"', $html);
+        self::assertStringContainsString('"name":"Track B"', $html);
     }
 
     public function testPortugueseRouteIsAvailable(): void
@@ -145,12 +167,11 @@ class RouteSuggestionControllerTest extends WebTestCase
             '_token' => $this->suggestToken(),
             'trackKeys' => [$a->getKey(), $b->getKey()],
         ]);
-        $saveToken = (string) $crawler->filter('[data-route-card="1"] form input[name="_token"]')->attr('value');
+        $saveToken = (string) $crawler->filter('[data-route-card] form input[name="_token"]')->attr('value');
 
         $missing = array_map(static fn (int $i): string => 'missing-key-' . $i, range(1, 5));
         $this->client->request('POST', '/routes/save', [
             '_token' => $saveToken,
-            'routeIndex' => 0,
             'trackKeys' => [$a->getKey(), $b->getKey(), ...$missing],
         ]);
 
@@ -180,11 +201,10 @@ class RouteSuggestionControllerTest extends WebTestCase
             '_token' => $token,
             'trackKeys' => [$a->getKey(), $b->getKey()],
         ]);
-        $saveToken = (string) $crawler->filter('[data-route-card="1"] form input[name="_token"]')->attr('value');
+        $saveToken = (string) $crawler->filter('[data-route-card] form input[name="_token"]')->attr('value');
 
         $this->client->request('POST', '/routes/save', [
             '_token' => $saveToken,
-            'routeIndex' => 0,
             'trackKeys' => [$a->getKey(), $b->getKey()],
         ]);
 
@@ -204,30 +224,6 @@ class RouteSuggestionControllerTest extends WebTestCase
         self::assertResponseRedirects('/en/track/info/' . $saved->getKey());
     }
 
-    public function testSavingAnOutOfRangeRouteIndexRedirectsWithAnError(): void
-    {
-        $user = $this->persistUser();
-        $a = $this->persistTrackFromFixture($user, 'Track A', 'crossing-a.gpx');
-        $b = $this->persistTrackFromFixture($user, 'Track B', 'crossing-b.gpx');
-        $this->client->loginUser($user);
-        $crawler = $this->client->request('POST', '/en/routes/suggest', [
-            '_token' => $this->suggestToken(),
-            'trackKeys' => [$a->getKey(), $b->getKey()],
-        ]);
-        $saveToken = (string) $crawler->filter('[data-route-card="1"] form input[name="_token"]')->attr('value');
-
-        $this->client->request('POST', '/routes/save', [
-            '_token' => $saveToken,
-            'routeIndex' => 99,
-            'trackKeys' => [$a->getKey(), $b->getKey()],
-        ]);
-
-        self::assertResponseRedirects('/en/tracks/');
-        $this->client->followRedirect();
-        self::assertSelectorTextContains('.alert-danger', 'no longer available');
-        self::assertSame(2, $this->entityManager->getRepository(\App\Entity\Track::class)->count(['user' => $user]));
-    }
-
     public function testSavingWithoutACsrfTokenIsForbidden(): void
     {
         $user = $this->persistUser();
@@ -235,7 +231,7 @@ class RouteSuggestionControllerTest extends WebTestCase
         $b = $this->persistTrackFromFixture($user, 'B', 'crossing-b.gpx');
         $this->client->loginUser($user);
 
-        $this->client->request('POST', '/routes/save', ['routeIndex' => 0, 'trackKeys' => [$a->getKey(), $b->getKey()]]);
+        $this->client->request('POST', '/routes/save', ['trackKeys' => [$a->getKey(), $b->getKey()]]);
 
         self::assertResponseStatusCodeSame(403);
     }
@@ -254,11 +250,10 @@ class RouteSuggestionControllerTest extends WebTestCase
             '_token' => (string) $crawler->filter('form[action="/en/routes/suggest"] input[name="_token"]')->attr('value'),
             'trackKeys' => [$mine->getKey(), $own->getKey()],
         ]);
-        $saveToken = (string) $page->filter('[data-route-card="1"] form input[name="_token"]')->attr('value');
+        $saveToken = (string) $page->filter('[data-route-card] form input[name="_token"]')->attr('value');
 
         $this->client->request('POST', '/routes/save', [
             '_token' => $saveToken,
-            'routeIndex' => 0,
             'trackKeys' => [$mine->getKey(), $theirs->getKey()],
         ]);
 

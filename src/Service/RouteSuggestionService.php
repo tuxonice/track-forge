@@ -9,7 +9,7 @@ use App\Gps\Route\CrossingDetector;
 use App\Gps\Route\PlanarTrack;
 use App\Gps\Route\RouteFinder;
 use App\Gps\Route\RoutePoint;
-use App\Gps\Route\SuggestedRoute;
+use App\Gps\Route\RouteSuggestion;
 use App\Gps\Route\TrackGraphBuilder;
 
 class RouteSuggestionService
@@ -27,13 +27,12 @@ class RouteSuggestionService
     }
 
     /**
-     * Ranked route suggestions (longest first) stitched from the given tracks; empty when no
-     * route rides every track.
+     * The longest route stitched from the given tracks that rides every one of them (null route
+     * when there is none), together with the source tracks' points.
      *
      * @param list<Track> $tracks
-     * @return list<SuggestedRoute>
      */
-    public function suggest(array $tracks): array
+    public function suggest(array $tracks): RouteSuggestion
     {
         $tracks = array_values($tracks);
         if (count($tracks) < 2) {
@@ -64,7 +63,9 @@ class RouteSuggestionService
 
         $crossings = $this->crossingDetector->detect($planar);
 
-        return $this->routeFinder->find($this->graphBuilder->build($planar, $crossings));
+        $routes = $this->routeFinder->find($this->graphBuilder->build($planar, $crossings));
+
+        return new RouteSuggestion($routes[0] ?? null, $pointLists);
     }
 
     /** @return list<RoutePoint> */

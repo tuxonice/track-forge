@@ -13,7 +13,6 @@ parameters:
     app.data_path: '%kernel.project_dir%/%env(UPLOAD_DATA_SUBDIR)%'
     # Defaults so an existing deployment's .env (which predates these) still boots; override via env.
     env(ROUTE_CROSSING_TOLERANCE_M): '25'
-    env(ROUTE_MAX_SUGGESTIONS): '5'
     env(ROUTE_MAX_TRACKS): '6'
     env(ROUTE_SEARCH_STEP_CAP): '100000'
 
@@ -31,7 +30,8 @@ services:
             string $allowCountryCode: '%env(ALLOW_COUNTRY_CODE)%'
             int $loginCodeTtl: '%env(int:LOGIN_TOLERANCE_TIME)%'
             float $routeCrossingToleranceM: '%env(float:ROUTE_CROSSING_TOLERANCE_M)%'
-            int $routeMaxSuggestions: '%env(int:ROUTE_MAX_SUGGESTIONS)%'
+            # Only the longest route is suggested for now; raise this to list several again.
+            int $routeMaxSuggestions: 1
             int $routeMaxTracks: '%env(int:ROUTE_MAX_TRACKS)%'
             int $routeSearchStepCap: '%env(int:ROUTE_SEARCH_STEP_CAP)%'
 

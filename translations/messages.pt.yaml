@@ -106,11 +106,11 @@ account:
 
 route:
     title: Percursos sugeridos
-    intro: Percursos construídos a seguir os percursos selecionados e a trocar entre eles nos pontos onde se cruzam. Os mais longos primeiro.
+    intro: O percurso mais longo construído a seguir os percursos selecionados e a trocar entre eles nos pontos onde se cruzam.
     suggest_button: Sugerir percurso
     select_hint: Selecione 2 ou mais percursos
     select_track: 'Selecionar %name%'
-    option: 'Sugestão %n%'
+    legend_result: Percurso sugerido
     uses: 'Usa:'
     save: Guardar como percurso
     none_found: Nenhum percurso encontrado. Os percursos selecionados não se cruzam de forma a que um único percurso passe por todos.

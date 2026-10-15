@@ -40,7 +40,7 @@ class RouteSuggestionServiceTest extends TestCase
             $this->uploader,
             new CrossingDetector(25.0),
             new TrackGraphBuilder(),
-            new RouteFinder(5, 100000),
+            new RouteFinder(1, 100000),
             $maxTracks,
         );
     }
@@ -58,26 +58,30 @@ class RouteSuggestionServiceTest extends TestCase
         return $this->track($name, (string) file_get_contents(self::FIXTURES . $fixture));
     }
 
-    public function testCrossingTracksProduceRankedSuggestions(): void
+    public function testCrossingTracksProduceTheLongestRouteAndExposeTheSourcePoints(): void
     {
-        $routes = $this->service()->suggest([
+        $suggestion = $this->service()->suggest([
             $this->fixtureTrack('A', 'crossing-a.gpx'),
             $this->fixtureTrack('B', 'crossing-b.gpx'),
         ]);
 
-        self::assertCount(4, $routes);
-        self::assertGreaterThan($routes[3]->distance, $routes[0]->distance);
-        self::assertSame([0, 1], $routes[0]->trackIndexes);
+        self::assertNotNull($suggestion->route);
+        self::assertSame([0, 1], $suggestion->route->trackIndexes);
+        // The longest route rides A's longer piece (~667 m) and B's longer piece (~556 m).
+        self::assertEqualsWithDelta(1223.0, $suggestion->route->distance, 60.0);
+        self::assertCount(2, $suggestion->sourcePoints);
+        self::assertNotEmpty($suggestion->sourcePoints[0]);
     }
 
-    public function testTracksThatNeverCrossProduceNoSuggestions(): void
+    public function testTracksThatNeverCrossProduceNoRoute(): void
     {
-        $routes = $this->service()->suggest([
+        $suggestion = $this->service()->suggest([
             $this->fixtureTrack('A', 'crossing-a.gpx'),
             $this->fixtureTrack('Far', 'no-crossing.gpx'),
         ]);
 
-        self::assertSame([], $routes);
+        self::assertNull($suggestion->route);
+        self::assertCount(2, $suggestion->sourcePoints);
     }
 
     public function testFewerThanTwoTracksIsRejected(): void

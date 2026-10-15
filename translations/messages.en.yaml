@@ -106,11 +106,11 @@ account:
 
 route:
     title: Suggested routes
-    intro: Routes built by following your selected tracks and switching between them where they cross. Longest first.
+    intro: The longest route built by following your selected tracks and switching between them where they cross.
     suggest_button: Suggest route
     select_hint: Select 2 or more tracks
     select_track: 'Select %name%'
-    option: 'Suggestion %n%'
+    legend_result: Suggested route
     uses: 'Uses:'
     save: Save as track
     none_found: No route found. The selected tracks do not cross each other in a way that lets one route ride all of them.
