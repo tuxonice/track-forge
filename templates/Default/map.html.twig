@@ -26,6 +26,16 @@
         #mapid {
             height: 100vh;
         }
+
+        .map-back {
+            background: #fff;
+            color: #212529;
+            padding: 6px 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, .4);
+            font: 14px/1.6 sans-serif;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +65,15 @@
 
     let polyline = L.polyline(latlngs, {color: '#ff7a00'}).addTo(mymap);
     mymap.fitBounds(polyline.getBounds());
+
+    const backButton = L.control({position: 'bottomleft'});
+    backButton.onAdd = () => {
+        const link = L.DomUtil.create('a', 'map-back');
+        link.href = {{ path('app_tracks')|json_encode|raw }};
+        link.textContent = {{ 'track.back_to_list'|trans|json_encode|raw }};
+        return link;
+    };
+    backButton.addTo(mymap);
 
     $(function() {
         jsPanel.create({

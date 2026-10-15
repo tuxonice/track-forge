@@ -30,7 +30,7 @@ class HomeControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/en/tracks/');
 
         self::assertResponseIsSuccessful();
-        $names = $crawler->filter('table tbody tr td:first-child')->each(
+        $names = $crawler->filter('table tbody tr td.text-start')->each(
             static fn ($node) => trim($node->text())
         );
         self::assertSame(['newest', 'oldest'], array_slice($names, 0, 2));

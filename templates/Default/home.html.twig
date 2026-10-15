@@ -46,6 +46,7 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
+                            <th style="width:1%"></th>
                             <th class="text-start">{{ 'home.table_name'|trans }}</th>
                             <th class="text-end">{{ 'track.distance'|trans }}</th>
                             <th class="text-end">{{ 'track.elevation'|trans }}</th>
@@ -55,6 +56,7 @@
                         <tbody>
                             {% for track in tracks %}
                                 <tr>
+                                    <td><input type="checkbox" class="form-check-input js-map-select" value="{{ track.key }}" aria-label="{{ 'home.show_on_map'|trans }}: {{ track.name }}"/></td>
                                     <td class="text-start">
                                         <a href="{{ path('app_track_view', {trackKey: track.key}) }}" class="tf-track-name">
                                             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l5-14 4 10 3-6 6 10"/></svg>
@@ -76,6 +78,12 @@
                 </div>
 
                 <div class="card-footer clearfix">
+                    {% if tracks %}
+                    <div class="mb-2 d-flex align-items-center gap-2">
+                        <a href="#" id="show-on-map" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-base="{{ path('app_tracks_map') }}">{{ 'home.show_on_map'|trans }}</a>
+                        <small class="text-muted">{{ 'home.show_on_map_hint'|trans }}</small>
+                    </div>
+                    {% endif %}
                     {{ include('Default/Blocks/pagination.html.twig', {pages: pages}) }}
                 </div>
             </div>
@@ -109,4 +117,27 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        (function () {
+            const max = 3;
+            const button = document.getElementById('show-on-map');
+            if (!button) {
+                return;
+            }
+            const boxes = Array.from(document.querySelectorAll('.js-map-select'));
+            const update = () => {
+                const checked = boxes.filter((box) => box.checked);
+                boxes.forEach((box) => { box.disabled = !box.checked && checked.length >= max; });
+                button.classList.toggle('disabled', checked.length === 0);
+                button.setAttribute('aria-disabled', checked.length === 0 ? 'true' : 'false');
+                button.href = checked.length ? button.dataset.base + '?tracks=' + checked.map((box) => box.value).join(',') : '#';
+            };
+            boxes.forEach((box) => box.addEventListener('change', update));
+            update();
+        })();
+    </script>
 {% endblock %}

@@ -5,6 +5,8 @@ nav:
     logout: Sair
 
 flash:
+    no_tracks_selected: Nenhum percurso selecionado
+    too_many_tracks: 'Só pode mostrar no máximo %max% percursos no mapa'
     account_deleted: A sua conta foi eliminada
     account_email_mismatch: O email introduzido não corresponde à sua conta
     no_file_uploaded: Nenhum ficheiro foi enviado
@@ -29,6 +31,8 @@ error:
     server_error: Ocorreu um erro inesperado. Por favor tente novamente mais tarde.
 
 home:
+    show_on_map: Mostrar no mapa
+    show_on_map_hint: Selecione até 3 percursos para mostrar no mapa
     tracks_title: Percursos
     tracks_subtitle: Todos os percursos que já registou, com distância, subida e o dia em que os fez.
     hero_eyebrow: 'Perfil · %email%'

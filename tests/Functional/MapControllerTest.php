@@ -22,6 +22,7 @@ class MapControllerTest extends WebTestCase
         self::assertSelectorTextContains('title', 'Morning Run');
         // Matches the known fixture stats already verified in GpsTrackTest.
         self::assertSelectorTextContains('#samplecontent', 'Points: 2');
+        self::assertStringContainsString('\/en\/tracks\/', (string) $this->client->getResponse()->getContent());
     }
 
     public function testMapRedirectsToHomeWhenTheTrackKeyIsUnknown(): void
@@ -61,6 +62,77 @@ class MapControllerTest extends WebTestCase
         self::assertResponseRedirects('/en/tracks/');
         $this->client->followRedirect();
         self::assertSelectorTextContains('.alert-danger', 'Track file does not exist');
+    }
+
+    public function testMultiMapRendersEachSelectedTrackWithItsOwnColor(): void
+    {
+        $user = $this->persistUser();
+        $first = $this->persistTrack($user, 'First');
+        $second = $this->persistTrack($user, 'Second');
+        foreach ([$first, $second] as $track) {
+            $this->writeTrackFile($user, $track, file_get_contents(self::FIXTURES . 'valid-track.gpx'));
+        }
+        $this->client->loginUser($user);
+
+        $crawler = $this->client->request('GET', '/en/map?tracks=' . $first->getKey() . ',' . $second->getKey());
+
+        self::assertResponseIsSuccessful();
+        $html = $crawler->html();
+        self::assertStringContainsString('#ff7a00', $html);
+        self::assertStringContainsString('#1f78ff', $html);
+        self::assertStringNotContainsString('#1a9850', $html);
+        self::assertStringContainsString('First', $html);
+        self::assertStringContainsString('Second', $html);
+        self::assertStringContainsString('\/en\/tracks\/', $html);
+    }
+
+    public function testMultiMapRejectsMoreThanThreeTracks(): void
+    {
+        $user = $this->persistUser();
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/en/map?tracks=a,b,c,d');
+
+        self::assertResponseRedirects('/en/tracks/');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('.alert-danger', 'at most 3 tracks');
+    }
+
+    public function testMultiMapRedirectsWhenNoTrackIsSelected(): void
+    {
+        $user = $this->persistUser();
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/en/map');
+
+        self::assertResponseRedirects('/en/tracks/');
+    }
+
+    public function testMultiMapRejectsATrackOfAnotherUser(): void
+    {
+        $owner = $this->persistUser('owner@example.com');
+        $mine = $this->persistTrack($owner, 'Mine');
+        $this->writeTrackFile($owner, $mine, file_get_contents(self::FIXTURES . 'valid-track.gpx'));
+        $visitor = $this->persistUser('visitor@example.com');
+        $theirs = $this->persistTrack($visitor, 'Theirs');
+        $this->writeTrackFile($visitor, $theirs, file_get_contents(self::FIXTURES . 'valid-track.gpx'));
+        $this->client->loginUser($visitor);
+
+        $this->client->request('GET', '/en/map?tracks=' . $theirs->getKey() . ',' . $mine->getKey());
+
+        self::assertResponseRedirects('/en/tracks/');
+    }
+
+    public function testMultiMapIsAvailableOnThePortugueseRoute(): void
+    {
+        $user = $this->persistUser();
+        $track = $this->persistTrack($user, 'Morning Run');
+        $this->writeTrackFile($user, $track, file_get_contents(self::FIXTURES . 'valid-track.gpx'));
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/pt/mapa?tracks=' . $track->getKey());
+
+        self::assertResponseIsSuccessful();
     }
 
     private function persistTrack(User $user, string $name): Track

@@ -5,6 +5,8 @@ nav:
     logout: Logout
 
 flash:
+    no_tracks_selected: No tracks selected
+    too_many_tracks: 'You can show at most %max% tracks on the map'
     account_deleted: Your account has been deleted
     account_email_mismatch: The email you entered does not match your account
     no_file_uploaded: No file was uploaded
@@ -29,6 +31,8 @@ error:
     server_error: An unexpected error occurred. Please try again later.
 
 home:
+    show_on_map: Show on map
+    show_on_map_hint: Select up to 3 tracks to show on the map
     tracks_title: Tracks
     tracks_subtitle: Every route you've logged, with distance, climb and the day you walked it.
     hero_eyebrow: 'Profile · %email%'

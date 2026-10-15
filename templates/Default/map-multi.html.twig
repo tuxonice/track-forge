@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - TrackForge</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <link rel="stylesheet" href="/css/map-style.css"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #mapid {
+            height: 100vh;
+        }
+
+        .map-back {
+            background: #fff;
+            color: #212529;
+            padding: 6px 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, .4);
+            font: 14px/1.6 sans-serif;
+            text-decoration: none;
+        }
+
+        .map-legend {
+            background: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, .4);
+            font: 14px/1.6 sans-serif;
+        }
+
+        .map-legend-swatch {
+            display: inline-block;
+            width: 14px;
+            height: 4px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div id="mapid"></div>
+<script>
+    const tracks = {{ tracks|json_encode|raw }};
+
+    const mymap = L.map('mapid');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(mymap);
+
+    const bounds = L.latLngBounds([]);
+    tracks.forEach((track) => {
+        const line = L.polyline(track.latlngs, {color: track.color, weight: 4}).addTo(mymap);
+        bounds.extend(line.getBounds());
+    });
+    mymap.fitBounds(bounds);
+
+    const legend = L.control({position: 'topright'});
+    legend.onAdd = () => {
+        const div = L.DomUtil.create('div', 'map-legend');
+        tracks.forEach((track) => {
+            const row = document.createElement('div');
+            const swatch = document.createElement('span');
+            swatch.className = 'map-legend-swatch';
+            swatch.style.background = track.color;
+            row.append(swatch, document.createTextNode(` ${track.name} (${track.distance} Km)`));
+            div.append(row);
+        });
+        return div;
+    };
+    legend.addTo(mymap);
+
+    const backButton = L.control({position: 'bottomleft'});
+    backButton.onAdd = () => {
+        const link = L.DomUtil.create('a', 'map-back');
+        link.href = {{ path('app_tracks')|json_encode|raw }};
+        link.textContent = {{ 'track.back_to_list'|trans|json_encode|raw }};
+        return link;
+    };
+    backButton.addTo(mymap);
+</script>
+</body>
+</html>
