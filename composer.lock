@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70d30340ee7d3c316344b36357e1e2b1",
+    "content-hash": "c5d143efbcc305e3fd25e48133f39975",
     "packages": [
         {
             "name": "doctrine/collections",
@@ -7169,24 +7169,26 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v8.1.12",
+            "version": "v8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "b7cd30cca21bca80e13f8e68f92200da5c294924"
+                "reference": "f688991d2c450c6f5ba2fa1d156f6db2ded11ce0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/b7cd30cca21bca80e13f8e68f92200da5c294924",
-                "reference": "b7cd30cca21bca80e13f8e68f92200da5c294924",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/f688991d2c450c6f5ba2fa1d156f6db2ded11ce0",
+                "reference": "f688991d2c450c6f5ba2fa1d156f6db2ded11ce0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1.0"
             },
             "require-dev": {
+                "symfony/clock": "^6.4|^7.0|^8.0",
                 "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/error-handler": "^6.4.3|^7.0.3|^8.0"
+                "symfony/error-handler": "^6.4.3|^7.0.3|^8.0",
+                "symfony/http-client": "^7.4|^8.0"
             },
             "bin": [
                 "bin/simple-phpunit"
@@ -7230,7 +7232,7 @@
                 "testing"
             ],
             "support": {
-                "source": "https://github.com/symfony/phpunit-bridge/tree/v8.1.12"
+                "source": "https://github.com/symfony/phpunit-bridge/tree/v8.2.0"
             },
             "funding": [
                 {
@@ -7250,8 +7252,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-16T12:51:10+00:00",
-            "published-time": "2026-11-25T09:29:11+00:00"
+            "time": "2026-11-16T12:56:42+00:00",
+            "published-time": "2026-11-28T12:11:50+00:00"
         }
     ],
     "aliases": [],
